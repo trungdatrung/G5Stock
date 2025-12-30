@@ -4,7 +4,7 @@ import logging
 import streamlit as st
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+# logging.basicConfig removed - using app-level config
 logger = logging.getLogger(__name__)
 
 @st.cache_data(ttl=3600*12)
@@ -41,4 +41,7 @@ def load_data(ticker_symbol: str, start_date, end_date) -> pd.DataFrame:
         
     except Exception as e:
         logger.error(f"Error fetching data for {ticker_symbol}: {e}", exc_info=True)
+        # Verify if it is an import error to give a hint
+        if "No module named" in str(e):
+             logger.error("It seems a dependency is missing.")
         return None

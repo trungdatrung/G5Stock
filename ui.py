@@ -142,9 +142,10 @@ def plot_chart(df: pd.DataFrame, df_with_pred: pd.DataFrame, future_df: pd.DataF
             x=0.01
         ),
         margin=dict(l=0, r=0, t=50, b=0),
-        xaxis=xaxis_settings # Apply dynamic settings
+        xaxis=xaxis_settings, # Apply dynamic settings
+        dragmode="pan"
     )
 
     fig.update_layout(**layout_config)
 
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True, config={'scrollZoom': True})

@@ -49,7 +49,10 @@ def train_model(df: pd.DataFrame, future_days: int):
         last_date = data['Date'].iloc[-1]
         future_dates = [last_date + timedelta(days=x) for x in range(1, future_days + 1)]
         future_ordinals = np.array([d.toordinal() for d in future_dates]).reshape(-1, 1)
-        future_preds = model.predict(future_ordinals)
+        
+        # Use DataFrame for prediction to match training feature names and silence warnings
+        future_X = pd.DataFrame(future_ordinals, columns=['Date_Ordinal'])
+        future_preds = model.predict(future_X)
         
         future_df = pd.DataFrame({
             'Date': future_dates,

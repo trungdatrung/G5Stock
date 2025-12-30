@@ -1,6 +1,7 @@
 import streamlit as st
 import logging
 from datetime import date, timedelta
+from dateutil.relativedelta import relativedelta
 import re
 
 # Import local modules
@@ -17,7 +18,11 @@ st.set_page_config(
 )
 
 # Setup basic logging for app.py
-logging.basicConfig(level=logging.INFO)
+# Configure logging centrally here
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 logger = logging.getLogger(__name__)
 
 # Custom CSS
@@ -38,7 +43,7 @@ st.markdown("""
 # --- Sidebar ---
 st.sidebar.header("Configuration")
 
-ticker = st.sidebar.text_input("Stock Ticker", value="AAPL").upper()
+ticker = st.sidebar.text_input("Stock Ticker", value="AAPL").upper().strip()
 
 today = date.today()
 start_default = today - timedelta(days=365*10)
@@ -56,10 +61,10 @@ if time_unit == "Days":
     future_days = horizon_val
 elif time_unit == "Months":
     horizon_val = st.sidebar.slider("Select Months", 1, 24, 6)
-    future_days = horizon_val * 30  # Approx
+    future_days = (today + relativedelta(months=horizon_val) - today).days
 else:  # Years
     horizon_val = st.sidebar.slider("Select Years", 1, 10, 1)
-    future_days = horizon_val * 365 # Approx
+    future_days = (today + relativedelta(years=horizon_val) - today).days
 
 run_button = st.sidebar.button("Retrain Model")
 
@@ -72,8 +77,9 @@ st.title("📈 Stock Price Predictor")
 st.markdown("Visualize historical trends and project future prices using Linear Regression.")
 
 # Validation
-if not re.match(r'^[A-Z0-9.-]{1,10}$', ticker):
-    st.warning("Invalid ticker format. Please use alphanumeric characters, dots, or hyphens.")
+# Relaxed validation to allow international tickers (e.g. ^GSPC, 0700.HK, BRK-B)
+if not re.match(r'^[A-Z0-9^.-]{1,15}$', ticker):
+    st.warning("Invalid ticker format. Please use alphanumeric characters, dots, hyphens, or carets.")
     st.stop()
 
 if isinstance(date_range, tuple) and len(date_range) == 2:

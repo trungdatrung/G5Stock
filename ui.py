@@ -66,28 +66,12 @@ def get_xaxis_layout(start_date, end_date):
             tickmode="auto"
         ))
         
-    # 2. Between 1 day and 1 month (approx 30 days)
-    elif duration <= pd.Timedelta(days=30):
-        xaxis_config.update(dict(
-            tickformat="%b %d", # Mar 1
-            dtick="D1", # Daily ticks
-            ticklabelmode="period"
-        ))
-        
-    # 3. Between 1 month and 1 year (approx 365 days)
-    elif duration <= pd.Timedelta(days=365):
-        xaxis_config.update(dict(
-            tickformat="%b", # Jan, Feb
-            dtick="M1", # Monthly ticks
-            ticklabelmode="period"
-        ))
-        
-    # 4. More than 1 year
+    # 2. More than 1 day: Allow Plotly to auto-scale ticks (daily/monthly/yearly)
+    # We set a detailed format so that when daily ticks appear (e.g. on zoom), they are readable.
     else:
         xaxis_config.update(dict(
-            tickformat="%Y", # 2022, 2023
-            dtick="M12", # Yearly ticks (12 months)
-            ticklabelmode="period"
+            tickformat="%b %d, %Y", # Jan 01, 2023
+            tickmode="auto"
         ))
         
     return xaxis_config

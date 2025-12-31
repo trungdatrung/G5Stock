@@ -13,19 +13,19 @@ class TestXAxis(unittest.TestCase):
         start = pd.Timestamp("2023-01-01")
         end = pd.Timestamp("2023-01-15")
         config = get_xaxis_layout(start, end)
-        self.assertEqual(config['tickformat'], "%b %d")
+        self.assertEqual(config['tickformat'], "%b %d, %Y")
 
     def test_range_1_year(self):
         start = pd.Timestamp("2023-01-01")
         end = pd.Timestamp("2023-06-01")
         config = get_xaxis_layout(start, end)
-        self.assertEqual(config['tickformat'], "%b")
+        self.assertEqual(config['tickformat'], "%b %d, %Y")
 
     def test_range_multi_year(self):
         start = pd.Timestamp("2022-01-01")
         end = pd.Timestamp("2024-01-01")
         config = get_xaxis_layout(start, end)
-        self.assertEqual(config['tickformat'], "%Y")
+        self.assertEqual(config['tickformat'], "%b %d, %Y")
 
 if __name__ == '__main__':
     unittest.main()
